@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  frontend:
+    image: tatarchap/time-app-frontend-dev
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    depends_on:
+      - api
+    environment:
+      BACKEND_PORT: ${BACKEND_PORT}
+      API_HOST: ${API_HOST}
+  api:
+    image: tatarchap/time-app-api-dev
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DB: ${MYSQL_DB}
+      BACKEND_PORT: ${BACKEND_PORT}
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+    volumes:
+      - mysql_data_pub:/var/lib/mysql
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - ${ADMINER_PORT}:${ADMINER_PORT}
+volumes:
+  mysql_data_pub:
